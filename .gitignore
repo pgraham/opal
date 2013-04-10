@@ -1,0 +1,5 @@
+vendor/
+composer.lock
+
+# Vim undo files
+*.un~

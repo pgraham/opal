@@ -1,0 +1,26 @@
+{
+    "name": "zeptech/class-generator",
+    "type": "library",
+    "description": "Class generation support for PHP",
+    "keywords": [ "templating", "code", "generation" ],
+    "homepage": "https://github.com/pgraham/class-generator",
+    "license": "BSD",
+    "authors": [
+      {
+          "name": "Philip Graham",
+          "email": "philip@zeptech.ca"
+      }
+    ],
+    "autoload": {
+        "psr-0": {
+            "zpt\\gen": ""
+        }
+    },
+    "require": {
+        "php": ">=5.3.0",
+        "zeptech/code-templates": ">=2.0.0"
+    },
+    "require-dev": {
+        "mockery/mockery": "dev-master"
+    }
+}
