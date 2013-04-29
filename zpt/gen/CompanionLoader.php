@@ -20,7 +20,7 @@ namespace zpt\gen;
  *
  * @author Philip Graham <philip@zeptech.ca>
  */
-class GeneratedClassLoader
+class CompanionLoader
 {
 
     /* Instance cache */

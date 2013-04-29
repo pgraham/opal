@@ -1,4 +1,4 @@
-# Companion class generator for PHP
+# O-pal: Companion class generator for PHP
 
 Generate and instantiate PHP companion objects.  Companion objects are genated
 based on two inputs, a class definition and a companion object
@@ -7,7 +7,7 @@ site](git@github.com:pgraham/php-code-templates.git)
 
 ## Example
 
-Given a class template:
+Given a companion template:
 
     <?php
     namespace my\dyn\ns;
@@ -34,19 +34,18 @@ Given a class template:
         }
     }
 
-This library can generate and instantiate instances of this class.  All that is
-required is to create a concrete generator class.
+And a generator implementation:
 
     <?php
     namespace my\ns;
 
-    use \zpt\gen\ClassGenerator;
+    use \zpt\gen\CompanionGenerator;
 
     /**
      * A class generator for model validators.
      */
-    class ValidatorGenerator extends ClassGenerator {
-        
+    class ValidatorGenerator extends CompanionGenerator {
+
         /**
          * This is required by the base class.
          */
@@ -78,3 +77,17 @@ required is to create a concrete generator class.
         }
     }
 
+Companion object can now be generated with the following:
+
+    // TODO
+
+They can be instantiated with the following:
+
+    // TODO
+
+## Why?
+
+Companion objects, in order to be generic enough to be a useful abstraction,
+will often require Reflection. Reflection can be quite slow so being able to
+generate companion objects during a compile step can eliminate the need to use
+reflection at runtime.
