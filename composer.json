@@ -1,9 +1,9 @@
 {
-    "name": "zeptech/class-generator",
+    "name": "zeptech/opal",
     "type": "library",
-    "description": "Class generation support for PHP",
+    "description": "Companion object generation",
     "keywords": [ "templating", "code", "generation" ],
-    "homepage": "https://github.com/pgraham/class-generator",
+    "homepage": "https://github.com/pgraham/opal",
     "license": "BSD",
     "authors": [
       {
@@ -13,7 +13,7 @@
     ],
     "autoload": {
         "psr-0": {
-            "zpt\\gen": ""
+            "zpt\\opal": ""
         }
     },
     "require": {

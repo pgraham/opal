@@ -12,7 +12,7 @@
  *
  * @license http://www.opensource.org/licenses/bsd-license.php
  */
-namespace zpt\gen;
+namespace zpt\opal;
 
 /**
  * Default naming strategy for generated classes.

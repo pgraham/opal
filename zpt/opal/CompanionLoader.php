@@ -12,7 +12,7 @@
  *
  * @license http://www.opensource.org/licenses/bsd-license.php
  */
-namespace zpt\gen;
+namespace zpt\opal;
 
 /**
  * Generated class loader.  Each instance of this class loads the set of classes
