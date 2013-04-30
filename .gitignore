@@ -1,5 +1,6 @@
 vendor/
 composer.lock
 
-# Vim undo files
+# Vim files
+*.swp
 *.un~
