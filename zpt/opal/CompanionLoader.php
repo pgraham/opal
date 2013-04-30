@@ -20,140 +20,106 @@ namespace zpt\opal;
  *
  * @author Philip Graham <philip@zeptech.ca>
  */
-class CompanionLoader
-{
+class CompanionLoader {
 
-    /* Instance cache */
-    private $instances = array();
+	/* Instance cache */
+	private $instances = array();
 
-    /* Whether or not to use the cache when retrieving aspects. */
-    private $useCache = true;
+	/* Whether or not to use the cache when retrieving aspects. */
+	private $useCache = true;
 
-    /* The base namespace for instances created by this loader. */
-    private $baseNamespace;
+	/* Naming strategy for instantiating instances. */
+	private $namingStrategy;
 
-    /* Naming strategy for instantiating instances. */
-    private $namingStrategy;
+	/**
+	 * Create a new loader for classes that live in the given namespace.
+	 *
+	 * @param string $baseNamespace
+	 */
+	public function __construct(
+			NamingStrategy $namingStrategy = null,
+			$useCache = true
+	) {
+		$this->namingStrategy = $namingStrategy;
+		$this->useCache = $useCache;
+	}
 
-    /* The factory used to create this loader, or a new factory if not set. */
-    private $factory;
+	/**
+	 * Get the generated class instance for the given target class.
+	 *
+	 * @param string $targetClass
+	 */
+	public function get($companionType, $model) {
+		if (is_object($model)) {
+			$model = get_class($model);
+		}
 
-    /**
-     * Create a new loader for classes that live in the given namespace.
-     *
-     * @param string $baseNamespace
-     */
-    public function __construct($baseNamespace)
-    {
-        $this->baseNamespace = $baseNamespace;
-    }
+		if (!$this->useCache) {
+			return $this->instantiate($model);
+		}
 
-    /**
-     * Get the generated class instance for the given target class.
-     *
-     * @param string $targetClass
-     */
-    public function get($targetClass)
-    {
-        if (is_object($targetClass)) {
-            $targetClass = get_class($targetClass);
-        }
+		if (!array_key_exists($this->instances[$companionType])) {
+			$this->instances[$companionType] = array();
+		}
 
-        if (!$this->useCache) {
-            return $this->instantiate($targetClass);
-        }
+		$companions =& $this->instances[$companionType];
+		if (!array_key_exists($model, $companions)) {
+			$instance = $this->instantiate($model);
+		  $companions[$model] = $instance;
+		}
+		return $companions[$model];
+	}
 
-        if (!array_key_exists($targetClass, $this->instances)) {
-            $instance = $this->instantiate($targetClass);
-            $instance->opalLoader = $this;
-            $this->instances[$targetClass] = $instance;
-        }
-        return $this->instances[$targetClass];
-    }
+	/*
+	 * =========================================================================
+	 * Dependency setters.
+	 * =========================================================================
+	 */
 
-    /**
-     * Getter for a CompanionLoaderFactory instances.  If this loader was
-     * instantiated by a factory then it will be the factory returned by this
-     * method.
-     *
-     * @return CompanionLoaderFactory
-     */
-    public function getFactory() {
-        $this->ensureFactory();
-        return $this->factory;
-    }
+	/**
+	 * Set whether or not to cache aspects. If set to false, all returned
+	 * aspects will be new instances.
+	 *
+	 * @param boolean $useCache
+	 */
+	public function setCacheEnabled($useCache) {
+		$this->useCache = $useCache;
+	}
 
-    /*
-     * =========================================================================
-     * Dependency setters.
-     * =========================================================================
-     */
+	/**
+	 * Set the naming strategy to use when retrieving aspects.
+	 *
+	 * @param NamingStrategy $naminStrategy
+	 */
+	public function setNamingStrategy(NamingStrategy $namingStrategy) {
+		$this->namingStrategy = $namingStrategy;
+	}
 
-    /**
-     * Set whether or not to cache aspects. If set to false, all returned
-     * aspects will be new instances.
-     *
-     * @param boolean $useCache
-     */
-    public function setCacheEnabled($useCache)
-    {
-        $this->useCache = $useCache;
-    }
+	/*
+	 * =========================================================================
+	 * Private helpers.
+	 * =========================================================================
+	 */
 
-    /**
-     * Setter for the factory used to create this loader. This method should 
-     * typically only be invoked by CompanionLoaderFactory instances.
-     *
-     * @param CompanionLoaderFactory $factory
-     */
-    public function setFactory(CompanionLoaderFactory $factory) {
-        $this->factory = $factory;
-    }
+	/*
+	 * Ensure that a naming strategy is available.  If none has been specified 
+	 * then a default strategy is used.
+	 */
+	private function ensureNamingStrategy() {
+		if ($this->namingStrategy === null) {
+			$this->namingStrategy = new DefaultNamingStrategy();
+		}
+	}
 
-    /**
-     * Set the naming strategy to use when retrieving aspects.
-     *
-     * @param NamingStrategy $naminStrategy
-     */
-    public function setNamingStrategy(NamingStrategy $namingStrategy)
-    {
-        $this->namingStrategy = $namingStrategy;
-    }
+	/* Instantiate an aspect for the specified class. */
+	private function instantiate($targetClass) {
+		$this->ensureNamingStrategy();
+		$className = $this->namingStrategy->getClassName($targetClass);
+		$fq = $this->baseNamespace . "\\$className";
 
-    /*
-     * =========================================================================
-     * Private helpers.
-     * =========================================================================
-     */
+		$instance = new $fq();
+		$instance->opalLoader = $this;
 
-    /*
-     * Ensuer that a CompanionLoaderFactory is available. If none has been 
-     * specified then a new factory is instantiated.
-     */
-    private function ensureFactory() {
-        if ($this->factory === null) {
-            $this->factory = new CompanionLoaderFactory();
-        }
-    }
-
-    /*
-     * Ensure that a naming strategy is available.  If none has been specified 
-     * then a default strategy is used.
-     */
-    private function ensureNamingStrategy() {
-        if ($this->namingStrategy === null) {
-            $this->namingStrategy = new DefaultNamingStrategy();
-        }
-    }
-
-    /* Instantiate an aspect for the specified class. */
-    private function instantiate($targetClass)
-    {
-        $this->ensureNamingStrategy();
-        $className = $this->namingStrategy->getClassName($targetClass);
-        $fq = $this->baseNamespace . "\\$className";
-        $instance = new $fq();
-
-        return $instance;
-    }
+		return $instance;
+	}
 }
