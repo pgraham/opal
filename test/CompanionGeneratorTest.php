@@ -12,11 +12,11 @@
  *
  * @license http://www.opensource.org/licenses/bsd-license.php
  */
-namespace zpt\gen\test;
+namespace zpt\opal\test;
 
 use PHPUnit_Framework_TestCase as TestCase;
 
-require_once __DIR__ . '/test-common.phpj';
+require_once __DIR__ . '/test-common.php';
 
 /**
  * This class tests the CompanionGenerator abstract class.
@@ -25,4 +25,16 @@ require_once __DIR__ . '/test-common.phpj';
  */
 class CompanionGeneratorTest extends TestCase {
 
+	protected function setUp() {
+		
+	}
+
+	protected function tearDown() {
+		\Mockery::close();
+
+	}
+
+	public function testGenerator() {
+
+	}
 }
