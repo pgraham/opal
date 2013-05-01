@@ -115,7 +115,7 @@ class CompanionLoader {
 	private function instantiate($companionType, $model) {
 		$this->ensureNamingStrategy();
 		$className = $this->namingStrategy->getClassName($model);
-		$fq = $companionType . '\\' . $model;
+		$fq = $companionType . '\\' . $className;
 
 		$instance = new $fq();
 		$instance->opalLoader = $this;

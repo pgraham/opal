@@ -26,16 +26,26 @@ use zpt\opal\CompanionLoader;
  */
 class CompanionLoaderTest extends TestCase {
 
-	protected function setUp() {
-		// Ensure that a MockCompanion object is available
-		eval("namespace mock;class SimpleCompanion {}");
-	}
 
 
 	public function testBasicLoading() {
+		// Ensure that a MockCompanion object is available
+		eval("namespace mock;class SimpleCompanion {}");
+
 		$loader = new CompanionLoader();
 
 		$instance = $loader->get('mock', 'SimpleCompanion');
+		$this->assertObjectHasAttribute('opalLoader', $instance);
+		$this->assertInstanceOf('zpt\opal\CompanionLoader', $instance->opalLoader);
+	}
+
+	public function testNamespacedModelLoading() {
+		// Ensure that a MockCompanion object is available
+		eval("namespace mock;class model_SimpleCompanion {}");
+		
+		$loader = new CompanionLoader();
+
+		$instance = $loader->get('mock', 'model\SimpleCompanion');
 		$this->assertObjectHasAttribute('opalLoader', $instance);
 		$this->assertInstanceOf('zpt\opal\CompanionLoader', $instance->opalLoader);
 	}
