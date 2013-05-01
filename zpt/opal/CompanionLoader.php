@@ -58,13 +58,13 @@ class CompanionLoader {
 			return $this->instantiate($model);
 		}
 
-		if (!array_key_exists($this->instances[$companionType])) {
+		if (!array_key_exists($companionType, $this->instances)) {
 			$this->instances[$companionType] = array();
 		}
 
 		$companions =& $this->instances[$companionType];
 		if (!array_key_exists($model, $companions)) {
-			$instance = $this->instantiate($model);
+			$instance = $this->instantiate($companionType, $model);
 		  $companions[$model] = $instance;
 		}
 		return $companions[$model];
@@ -112,10 +112,10 @@ class CompanionLoader {
 	}
 
 	/* Instantiate an aspect for the specified class. */
-	private function instantiate($targetClass) {
+	private function instantiate($companionType, $model) {
 		$this->ensureNamingStrategy();
-		$className = $this->namingStrategy->getClassName($targetClass);
-		$fq = $this->baseNamespace . "\\$className";
+		$className = $this->namingStrategy->getClassName($model);
+		$fq = $companionType . '\\' . $model;
 
 		$instance = new $fq();
 		$instance->opalLoader = $this;
