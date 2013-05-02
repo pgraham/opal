@@ -55,7 +55,7 @@ class CompanionLoader {
 		}
 
 		if (!$this->useCache) {
-			return $this->instantiate($model);
+			return $this->instantiate($companionType, $model);
 		}
 
 		if (!array_key_exists($companionType, $this->instances)) {

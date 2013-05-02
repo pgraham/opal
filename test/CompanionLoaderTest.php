@@ -49,4 +49,17 @@ class CompanionLoaderTest extends TestCase {
 		$this->assertObjectHasAttribute('opalLoader', $instance);
 		$this->assertInstanceOf('zpt\opal\CompanionLoader', $instance->opalLoader);
 	}
+
+	public function testCacheDisabled() {
+		// Ensure that a mock companion class is defined
+		eval("namespace mock; class NotCachedCompanion {}");
+
+		$loader = new CompanionLoader();
+		$loader->setCacheEnabled(false);
+
+		$instance1 = $loader->get('mock', 'NotCachedCompanion');
+		$instance2 = $loader->get('mock', 'NotCachedCompanion');
+
+		$this->assertFalse($instance1 === $instance2);
+	}
 }
