@@ -12,6 +12,4 @@
  *
  * @license http://www.opensource.org/licenses/bsd-license.php
  */
-namespace zpt\test\gen;
-
-require __DIR__ . '/../vendor/autoload.php';
+$loader = require __DIR__ . '/../vendor/autoload.php';

@@ -12,9 +12,10 @@
  *
  * @license http://www.opensource.org/licenses/bsd-license.php
  */
-namespace zpt\opal\test;
+namespace zpt\opal;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use \PHPUnit_Framework_TestCase as TestCase;
+use \Mockery as M;
 
 require_once __DIR__ . '/test-common.php';
 
