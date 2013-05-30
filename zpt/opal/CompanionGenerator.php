@@ -14,6 +14,7 @@
  */
 namespace zpt\opal;
 
+use \zpt\pct\CodeTemplateParser;
 use \SplFileObject;
 
 /**
@@ -74,11 +75,6 @@ abstract class CompanionGenerator
             '/',
             static::$actorNamespace
         );
-
-        $parser = new CodeTemplateParser();
-        $this->tmpl = $parser->parse(
-            file_get_contents($this->getTemplatePath())
-        );
     }
 
     /**
@@ -88,7 +84,7 @@ abstract class CompanionGenerator
      * @param string $defClass The definition for which to generate an actor.
      */
     public function generate($defClass) {
-        $this->ensureNamingStrategy();
+        $this->init();
 
         $values = $this->getValues($defClass);
         $values['actorNs'] = static::$actorNamespace;
@@ -145,9 +141,17 @@ abstract class CompanionGenerator
      * =========================================================================
      */
 
-    private function ensureNamingStrategy() {
+    /* Ensure dependency are initialized */
+    private function init() {
         if ($this->namingStrategy === null) {
             $this->namingStrategy = new DefaultNamingStrategy();
+        }
+
+        if ($this->tmpl === null) {
+            $parser = new CodeTemplateParser();
+            $this->tmpl = $parser->parse(
+                file_get_contents($this->getTemplatePath())
+            );
         }
     }
 

@@ -27,15 +27,29 @@ require_once __DIR__ . '/test-common.php';
 class CompanionGeneratorTest extends TestCase {
 
 	protected function setUp() {
-		
+		$target = __DIR__ . '/target';
+		if (file_exists($target)) {
+			exec("rm -r $target");
+		}
+		mkdir($target);	
 	}
 
 	protected function tearDown() {
 		\Mockery::close();
-
 	}
 
 	public function testGenerator() {
+		$generator = M::mock(
+			"zpt\opal\CompanionGenerator[getTemplatePath,getValues]",
+			array(__DIR__ . '/target')
+		);
 
+		$generator
+			->shouldReceive('getTemplatePath')
+			->andReturn(__DIR__ . '/mock/sample.tmpl.php');
+
+		$generator
+			->shouldReceive('getValues')
+			->andReturn(array());
 	}
 }
