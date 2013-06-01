@@ -55,10 +55,9 @@ class CompanionLoaderTest extends TestCase {
 		eval("namespace mock; class NotCachedCompanion {}");
 
 		$loader = new CompanionLoader();
-		$loader->setCacheEnabled(false);
 
-		$instance1 = $loader->get('mock', 'NotCachedCompanion');
-		$instance2 = $loader->get('mock', 'NotCachedCompanion');
+		$instance1 = $loader->get('mock', 'NotCachedCompanion', false);
+		$instance2 = $loader->get('mock', 'NotCachedCompanion', false);
 
 		$this->assertFalse($instance1 === $instance2);
 	}

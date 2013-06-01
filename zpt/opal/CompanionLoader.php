@@ -25,9 +25,6 @@ class CompanionLoader {
 	/* Instance cache */
 	private $instances = array();
 
-	/* Whether or not to use the cache when retrieving aspects. */
-	private $useCache = true;
-
 	/* Naming strategy for instantiating instances. */
 	private $namingStrategy;
 
@@ -36,12 +33,8 @@ class CompanionLoader {
 	 *
 	 * @param string $baseNamespace
 	 */
-	public function __construct(
-			NamingStrategy $namingStrategy = null,
-			$useCache = true
-	) {
+	public function __construct(NamingStrategy $namingStrategy = null) {
 		$this->namingStrategy = $namingStrategy;
-		$this->useCache = $useCache;
 	}
 
 	/**
@@ -49,12 +42,12 @@ class CompanionLoader {
 	 *
 	 * @param string $targetClass
 	 */
-	public function get($companionType, $model) {
+	public function get($companionType, $model, $useCache = true) {
 		if (is_object($model)) {
 			$model = get_class($model);
 		}
 
-		if (!$this->useCache) {
+		if (!$useCache) {
 			return $this->instantiate($companionType, $model);
 		}
 
@@ -75,16 +68,6 @@ class CompanionLoader {
 	 * Dependency setters.
 	 * =========================================================================
 	 */
-
-	/**
-	 * Set whether or not to cache aspects. If set to false, all returned
-	 * aspects will be new instances.
-	 *
-	 * @param boolean $useCache
-	 */
-	public function setCacheEnabled($useCache) {
-		$this->useCache = $useCache;
-	}
 
 	/**
 	 * Set the naming strategy to use when retrieving aspects.
