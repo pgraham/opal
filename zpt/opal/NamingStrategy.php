@@ -30,6 +30,6 @@ interface NamingStrategy
      *
      * @param string $targetClass
      */
-    public function getClassName($targetClass);
+    public function getCompanionClassName($targetClass);
     
 }

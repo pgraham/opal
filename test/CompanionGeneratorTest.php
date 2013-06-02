@@ -39,17 +39,28 @@ class CompanionGeneratorTest extends TestCase {
 	}
 
 	public function testGenerator() {
-		$generator = M::mock(
-			"zpt\opal\CompanionGenerator[getTemplatePath,getValues]",
-			array(__DIR__ . '/target')
-		);
+		$generator = new MockGenerator();
+		$generator->generate('my\Model');
 
-		$generator
-			->shouldReceive('getTemplatePath')
-			->andReturn(__DIR__ . '/mock/sample.tmpl.php');
+		$this->assertFileExists(__DIR__ . '/target/mock/ns/my/Model.php');
+	}
+}
 
-		$generator
-			->shouldReceive('getValues')
-			->andReturn(array());
+class MockGenerator extends CompanionGenerator {
+
+	public function __construct() {
+		parent::__construct(__DIR__ . '/target');
+	}
+	
+	public function getCompanionNamespace($defClass) {
+		return 'mock\ns';
+	}
+
+	public function getTemplatePath($defClass) {
+		return __DIR__ . '/mock/sample.tmpl.php';
+	}
+
+	public function getValues($defClass) {
+		return array();
 	}
 }

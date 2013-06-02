@@ -97,7 +97,7 @@ class CompanionLoader {
 	/* Instantiate an aspect for the specified class. */
 	private function instantiate($companionType, $model) {
 		$this->ensureNamingStrategy();
-		$className = $this->namingStrategy->getClassName($model);
+		$className = $this->namingStrategy->getCompanionClassName($model);
 		$fq = $companionType . '\\' . $className;
 
 		$instance = new $fq();
