@@ -101,7 +101,10 @@ class CompanionLoader {
 		$fq = $companionType . '\\' . $className;
 
 		$instance = new $fq();
-		$instance->opalLoader = $this;
+
+		// Assign some properties on the companion for convenience.  All properties
+		// are prefixed with __opal__
+		$instance->__opal__loader = $this;
 
 		return $instance;
 	}

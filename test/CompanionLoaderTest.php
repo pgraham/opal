@@ -35,8 +35,11 @@ class CompanionLoaderTest extends TestCase {
 		$loader = new CompanionLoader();
 
 		$instance = $loader->get('mock', 'SimpleCompanion');
-		$this->assertObjectHasAttribute('opalLoader', $instance);
-		$this->assertInstanceOf('zpt\opal\CompanionLoader', $instance->opalLoader);
+		$this->assertObjectHasAttribute('__opal__loader', $instance);
+		$this->assertInstanceOf(
+			'zpt\opal\CompanionLoader',
+			$instance->__opal__loader
+		);
 	}
 
 	public function testNamespacedModelLoading() {
@@ -46,8 +49,11 @@ class CompanionLoaderTest extends TestCase {
 		$loader = new CompanionLoader();
 
 		$instance = $loader->get('mock', 'model\SimpleCompanion');
-		$this->assertObjectHasAttribute('opalLoader', $instance);
-		$this->assertInstanceOf('zpt\opal\CompanionLoader', $instance->opalLoader);
+		$this->assertObjectHasAttribute('__opal__loader', $instance);
+		$this->assertInstanceOf(
+			'zpt\opal\CompanionLoader',
+			$instance->__opal__loader
+		);
 	}
 
 	public function testCacheDisabled() {
