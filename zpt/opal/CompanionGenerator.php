@@ -96,6 +96,17 @@ abstract class CompanionGenerator
     }
 
     /**
+     * Getter for the generator's naming strategy. Access is useful when 
+     * a companion class name needs to be determined outside of normal companion 
+     * generation and loading.
+     *
+     * @return NamingStrategy
+     */
+    public function getNamingStrategy() {
+        return $this->namingStrategy;
+    }
+
+    /**
      * This method is responsible for returning the base namespace in which 
      * companion object reside.
      *
