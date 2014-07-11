@@ -3,7 +3,7 @@
 Generate and instantiate PHP companion objects.  Companion objects are genated
 based on two inputs, a class definition and a companion object
 template. Template documentation can be found on [the php-code-templates github
-site](git@github.com:pgraham/php-code-templates.git)
+site](https://github.com/pgraham/php-code-templates)
 
 ## Example
 
