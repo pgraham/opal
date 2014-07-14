@@ -7,7 +7,7 @@ site](https://github.com/pgraham/php-code-templates)
 
 ## Example
 
-Given a companion template:
+Given a companion template (Validator.tmpl.php):
 
     <?php
     namespace my\dyn\ns;
@@ -46,16 +46,20 @@ And a generator implementation:
      */
     class ValidatorGenerator extends CompanionGenerator {
 
+        public static $companionNs = 'my\dyn\ns';
+
         /**
-         * This is required by the base class.
+         * @Override
          */
-        public static $actorNamespace = 'my\dyn\ns';
+        public function getCompanionNamespace() {
+            return self::$companionNs;
+        }
 
         /**
          * @Override
          */
         public function getTemplatePath() {
-            return __DIR__ . '/ModelValidator.tmpl.php';
+            return __DIR__ . '/Validator.tmpl.php';
         }
 
         /**
@@ -77,17 +81,30 @@ And a generator implementation:
         }
     }
 
-Companion object can now be generated with the following:
+A companion object for `SomeClass` can now be generated with the following:
 
-    // TODO
+    <?php
+    $companionGenerator = new ValidatorGenerator($outputPath);
+    $companionGenerator->generate('SomeClass');
 
-They can be instantiated with the following:
+They can be instantiated with the following (with `my\dyn\ns` added to an
+autoloader):
 
-    // TODO
+    <?php
+    $companionLoader = new CompanionLoader($outputPath);
+    $validator = $companionLoader->get(
+        ValidatorGenerator::$actorNamespace,
+        'SomeClass'
+    );
 
-## Why?
+or
 
-Companion objects, in order to be generic enough to be a useful abstraction,
-will often require Reflection. Reflection can be quite slow so being able to
-generate companion objects during a compile step can eliminate the need to use
-reflection at runtime.
+    <?php
+    class ValidatorLoader extends CompanionLoader {
+
+        public function loadFor($class) {
+            return parent::get(ValidatorGenerator::$actorNs, 'SomeClass');
+        }
+    }
+
+    (new ValidatorLoader)->loadFor('SomeClass');
