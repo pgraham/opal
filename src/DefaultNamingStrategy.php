@@ -16,8 +16,8 @@ namespace zpt\opal;
 class DefaultNamingStrategy implements NamingStrategy
 {
 
-    public function getCompanionClassName($targetClass)
-    {
-        return str_replace('\\', '_', $targetClass);
-    }
+	public function getCompanionClassName($targetClass)
+	{
+		return str_replace('\\', '_', $targetClass);
+	}
 }
