@@ -1,16 +1,10 @@
 <?php
-/**
- * =============================================================================
- * Copyright (c) 2013, Philip Graham
+/*
+ * Copyright (c) 2014, Philip Graham
  * All rights reserved.
  *
- * This file is part of O-pal and is licensed by the Copyright holder under the 
- * 3-clause BSD License.  The full text of the license can be found in the 
- * LICENSE.txt file included in the root directory of this distribution or at 
- * the link below.
- * =============================================================================
- *
- * @license http://www.opensource.org/licenses/bsd-license.php
+ * This file is part of O-pal. For the full copyright and license information
+ * please view the LICENSE file that was distributed with this source code.
  */
 namespace zpt\opal;
 
@@ -85,7 +79,7 @@ class CompanionLoader {
 	 */
 
 	/*
-	 * Ensure that a naming strategy is available.  If none has been specified 
+	 * Ensure that a naming strategy is available.  If none has been specified
 	 * then a default strategy is used.
 	 */
 	private function ensureNamingStrategy() {
