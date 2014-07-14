@@ -12,8 +12,8 @@
       }
     ],
     "autoload": {
-        "psr-0": {
-            "zpt\\opal": ""
+        "psr-4": {
+            "zpt\\opal\\": "src/"
         }
     },
     "require": {
