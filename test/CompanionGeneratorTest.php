@@ -4,9 +4,9 @@
  * Copyright (c) 2013, Philip Graham
  * All rights reserved.
  *
- * This file is part of O-pal and is licensed by the Copyright holder under the 
- * 3-clause BSD License.  The full text of the license can be found in the 
- * LICENSE.txt file included in the root directory of this distribution or at 
+ * This file is part of O-pal and is licensed by the Copyright holder under the
+ * 3-clause BSD License.  The full text of the license can be found in the
+ * LICENSE.txt file included in the root directory of this distribution or at
  * the link below.
  * =============================================================================
  *
@@ -31,36 +31,29 @@ class CompanionGeneratorTest extends TestCase {
 		if (file_exists($target)) {
 			exec("rm -r $target");
 		}
-		mkdir($target);	
+		mkdir($target);
 	}
 
 	protected function tearDown() {
-		\Mockery::close();
+		M::close();
 	}
 
 	public function testGenerator() {
-		$generator = new MockGenerator();
-		$generator->generate('my\Model');
+		$director = M::mock('zpt\opal\CompanionDirector');
 
-		$this->assertFileExists(__DIR__ . '/target/mock/ns/my/Model.php');
-	}
-}
+		$director
+			->shouldReceive('getTemplatePath')
+			->andReturn(__DIR__ . '/mock/sample.tmpl.php');
+		$director
+			->shouldReceive('getCompanionName')
+			->andReturn('Sample');
+		$director
+			->shouldReceive('getValuesFor')
+			->andReturn([]);
 
-class MockGenerator extends CompanionGenerator {
+		$target = new Psr4Dir(__DIR__ . '/target');
 
-	public function __construct() {
-		parent::__construct(__DIR__ . '/target');
-	}
-	
-	public function getCompanionNamespace($defClass) {
-		return 'mock\ns';
-	}
-
-	public function getTemplatePath($defClass) {
-		return __DIR__ . '/mock/sample.tmpl.php';
-	}
-
-	public function getValues($defClass) {
-		return array();
+		$generator = new CompanionGenerator($director, $target);
+		$generator->generate((object) []);
 	}
 }

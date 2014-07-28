@@ -4,20 +4,20 @@
  * Copyright (c) 2013, Philip Graham
  * All rights reserved.
  *
- * This file is part of O-pal and is licensed by the Copyright holder under the 
- * 3-clause BSD License.  The full text of the license can be found in the 
- * LICENSE.txt file included in the root directory of this distribution or at 
+ * This file is part of O-pal and is licensed by the Copyright holder under the
+ * 3-clause BSD License.  The full text of the license can be found in the
+ * LICENSE.txt file included in the root directory of this distribution or at
  * the link below.
  * =============================================================================
  *
  * @license http://www.opensource.org/licenses/bsd-license.php
  */
-namespace zpt\opal\test;
+namespace zpt\opal;
 
 require __DIR__ . '/test-common.php';
 
 use PHPUnit_Framework_TestCase as TestCase;
-use zpt\opal\CompanionLoader;
+use \Mockery as M;
 
 /**
  * This class tests the CompanionLoader class.
@@ -26,15 +26,25 @@ use zpt\opal\CompanionLoader;
  */
 class CompanionLoaderTest extends TestCase {
 
-
+	protected function tearDown() {
+		M::close();
+	}
 
 	public function testBasicLoading() {
 		// Ensure that a MockCompanion object is available
 		eval("namespace mock;class SimpleCompanion {}");
 
-		$loader = new CompanionLoader();
+		// Mock the CompanionDirector
+		$director = M::mock('zpt\opal\CompanionDirector');
+		$director
+			->shouldReceive('getCompanionName')
+			->andReturn('mock\SimpleCompanion');
 
-		$instance = $loader->get('mock', 'SimpleCompanion');
+		$target = new Psr4Dir(__DIR__ . '/target');
+
+		$loader = new CompanionLoader($director, $target);
+
+		$instance = $loader->get('LonelyClass');
 		$this->assertObjectHasAttribute('__opal__loader', $instance);
 		$this->assertInstanceOf(
 			'zpt\opal\CompanionLoader',
@@ -42,13 +52,21 @@ class CompanionLoaderTest extends TestCase {
 		);
 	}
 
-	public function testNamespacedModelLoading() {
+	public function testNamespacePrefixLoading() {
 		// Ensure that a MockCompanion object is available
-		eval("namespace mock;class model_SimpleCompanion {}");
-		
-		$loader = new CompanionLoader();
+		eval("namespace dyn\mock;class SimpleCompanion {}");
 
-		$instance = $loader->get('mock', 'model\SimpleCompanion');
+		// Mock the CompanionDirector
+		$director = M::mock('zpt\opal\CompanionDirector');
+		$director
+			->shouldReceive('getCompanionName')
+			->andReturn('mock\SimpleCompanion');
+
+		$target = new Psr4Dir(__DIR__ . '/target', 'dyn');
+
+		$loader = new CompanionLoader($director, $target);
+
+		$instance = $loader->get('LonelyClass');
 		$this->assertObjectHasAttribute('__opal__loader', $instance);
 		$this->assertInstanceOf(
 			'zpt\opal\CompanionLoader',
@@ -58,12 +76,19 @@ class CompanionLoaderTest extends TestCase {
 
 	public function testCacheDisabled() {
 		// Ensure that a mock companion class is defined
-		eval("namespace mock; class NotCachedCompanion {}");
+		eval("namespace uncached\mock; class SimpleCompanion {}");
 
-		$loader = new CompanionLoader();
+		// Mock the CompanionDirector
+		$director = M::mock('zpt\opal\CompanionDirector');
+		$director
+			->shouldReceive('getCompanionName')
+			->andReturn('mock\SimpleCompanion');
 
-		$instance1 = $loader->get('mock', 'NotCachedCompanion', false);
-		$instance2 = $loader->get('mock', 'NotCachedCompanion', false);
+		$target = new Psr4Dir(__DIR__ . '/target', 'uncached');
+		$loader = new CompanionLoader($director, $target);
+
+		$instance1 = $loader->get('LonelyClass', false);
+		$instance2 = $loader->get('LonelyClass', false);
 
 		$this->assertFalse($instance1 === $instance2);
 	}

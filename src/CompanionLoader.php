@@ -8,93 +8,65 @@
  */
 namespace zpt\opal;
 
+use ReflectionClass;
+
 /**
- * Generated class loader.  Each instance of this class loads the set of classes
- * that can be generated from a single class template.
+ * Companion loader.
  *
  * @author Philip Graham <philip@zeptech.ca>
  */
-class CompanionLoader {
+class CompanionLoader extends CompanionProvider
+{
 
 	/* Instance cache */
 	private $instances = array();
 
-	/* Naming strategy for instantiating instances. */
-	private $namingStrategy;
+	private $director;
+	private $target;
 
 	/**
 	 * Create a new loader for classes that live in the given namespace.
 	 *
 	 * @param string $baseNamespace
 	 */
-	public function __construct(NamingStrategy $namingStrategy = null) {
-		$this->namingStrategy = $namingStrategy;
+	public function __construct(CompanionDirector $director, Psr4Dir $target) {
+		$this->director = $director;
+		$this->target = $target;
 	}
 
 	/**
-	 * Get the generated class instance for the given target class.
+	 * Get the generated class instance for the given lonely class.
 	 *
-	 * @param string $targetClass
+	 * @param string $className
+	 *   The class for which a companion, of they type provided by this loader,
+	 *   should be provided.
 	 */
-	public function get($companionType, $model, $useCache = true) {
-		if (is_object($model)) {
-			$model = get_class($model);
-		}
-
+	public function get($className, $useCache = true) {
 		if (!$useCache) {
-			return $this->instantiate($companionType, $model);
+			return $this->instantiate($className);
 		}
 
-		if (!array_key_exists($companionType, $this->instances)) {
-			$this->instances[$companionType] = array();
+		if (!array_key_exists($className, $this->instances)) {
+			$instance = $this->instantiate($className);
+		  $this->instances[$className] = $instance;
 		}
-
-		$companions =& $this->instances[$companionType];
-		if (!array_key_exists($model, $companions)) {
-			$instance = $this->instantiate($companionType, $model);
-		  $companions[$model] = $instance;
-		}
-		return $companions[$model];
+		return $this->instances[$className];
 	}
 
-	/*
-	 * =========================================================================
-	 * Dependency setters.
-	 * =========================================================================
-	 */
+	/* Instantiate a companion for the specified class. */
+	private function instantiate($model) {
+		$companionName = $this->director->getCompanionName($model);
 
-	/**
-	 * Set the naming strategy to use when retrieving aspects.
-	 *
-	 * @param NamingStrategy $naminStrategy
-	 */
-	public function setNamingStrategy(NamingStrategy $namingStrategy) {
-		$this->namingStrategy = $namingStrategy;
-	}
-
-	/*
-	 * =========================================================================
-	 * Private helpers.
-	 * =========================================================================
-	 */
-
-	/*
-	 * Ensure that a naming strategy is available.  If none has been specified
-	 * then a default strategy is used.
-	 */
-	private function ensureNamingStrategy() {
-		if ($this->namingStrategy === null) {
-			$this->namingStrategy = new DefaultNamingStrategy();
+		$psr4Prefix = $this->target->getPrefix();
+		if (!empty($psr4Prefix)) {
+			$companionName = $psr4Prefix->join($companionName, '\\');
 		}
-	}
 
-	/* Instantiate an aspect for the specified class. */
-	private function instantiate($companionType, $model) {
-		$this->ensureNamingStrategy();
-		$className = $this->namingStrategy->getCompanionClassName($model);
-		$fq = $companionType . '\\' . $className;
+		// Need to explicitely cast to string to avoid attempting to instantiate
+		// another instance of zpt\util\String
+		$companionName = (string) $companionName;
 
-		$instance = new $fq();
+		$instance = new $companionName();
 
 		// Assign some properties on the companion for convenience.  All properties
 		// are prefixed with __opal__
