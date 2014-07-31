@@ -12,7 +12,10 @@ use ReflectionClass;
 
 /**
  * Interface for classes that coordinate the generation and loading of companion
- * objects.
+ * objects. Each CompanionDirector implementation controls the generation and
+ * loading of companions of a single type. It is up to the implementation
+ * whether or not companions can be generated for class or only for classes that
+ * meet certain requirements.
  *
  * @author Philip Graham <philip@zeptech.ca>
  */
@@ -27,10 +30,12 @@ interface CompanionDirector
 	public function getTemplatePath();
 
 	/**
-	 * Get the fully qualified class name for the companion of the type defined by
-	 * the directory for the given class.
+	 * Get the fully qualified class name for the companion of a given class.
 	 *
 	 * @param string $className
+	 * @throws UnexpectedValueException
+	 *   If the CompanionDirector is not able to generate/load a companion for the
+	 *   specified class for any reason.
 	 */
 	public function getCompanionName($className);
 
@@ -39,6 +44,9 @@ interface CompanionDirector
 	 *
 	 * @param ReflectionClass $defClass
 	 * @return array
+	 * @throws UnexpectedValueException
+	 *   If the CompanionDirector is not able to generate/load a companion for the
+	 *   specified class for any reason.
 	 */
 	public function getValuesFor(ReflectionClass $defClass);
 
