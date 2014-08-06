@@ -18,9 +18,18 @@ class CompanionLoaderFactory
 {
 
 	private $target;
+	private $loaders = [];
 
 	public function __construct(Psr4Dir $target) {
 		$this->target = $target;
+	}
+
+	public function get(CompanionDirector $director) {
+		$loaderType = get_class($director);
+		if (isset($this->loaders[$loaderType])) {
+			return $this->loaders[$loaderType];
+		}
+		return $this->create($director);
 	}
 
 	/**
@@ -29,7 +38,15 @@ class CompanionLoaderFactory
 	 * @param CompanionDirector $director
 	 */
 	public function create(CompanionDirector $director) {
-		return new CompanionLoader($director, $target);
+		$loaderType = get_class($director);
+		$loader = new CompanionLoader($director, $this->target, $this);
+		$this->setLoader($loaderType, $loader);
+		return $loader;
 	}
+
+	public function setLoader($loaderType, $loader) {
+		$this->loaders[$loaderType] = $loader;
+	}
+
 
 }

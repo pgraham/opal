@@ -52,6 +52,7 @@ class CompanionLoader extends CompanionProvider
 
 		if ($factory === null) {
 			$factory = new CompanionLoaderFactory($target);
+			$factory->setLoader(get_class($director), $this);
 		}
 		$this->factory = $factory;
 	}
