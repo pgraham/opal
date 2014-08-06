@@ -17,6 +17,8 @@ use ReflectionClass;
  * whether or not companions can be generated for class or only for classes that
  * meet certain requirements.
  *
+ * TODO Add loader cache control method(s)
+ *
  * @author Philip Graham <philip@zeptech.ca>
  */
 interface CompanionDirector
