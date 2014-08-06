@@ -43,8 +43,9 @@ abstract class BaseCompanionDirector implements CompanionDirector
 	 *   generated.
 	 */
 	public function getCompanionName($className) {
+		$type = $this->companionType;
 		$basename = str_replace('\\', '_', $className);
 
-		return $basename . $this->companionType;
+		return $type . '\\' . $basename . ucfirst($type);
 	}
 }

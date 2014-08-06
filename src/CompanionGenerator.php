@@ -65,7 +65,7 @@ class CompanionGenerator extends CompanionProvider
 		$outDir = $this->target->getPath()->pathJoin($companionNsPath);
 		$outPath = $outDir->pathJoin($companionClass . '.php');
 
-		$psr4Prefix = $this->target->getPrefix();
+		$psr4Prefix = $this->target->getPrefix()->rtrim('\\');
 		if (!empty($psr4Prefix)) {
 			$companionNs = $psr4Prefix->join($companionNs, '\\');
 		}

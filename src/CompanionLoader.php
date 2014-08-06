@@ -57,7 +57,7 @@ class CompanionLoader extends CompanionProvider
 	private function instantiate($model) {
 		$companionName = $this->director->getCompanionName($model);
 
-		$psr4Prefix = $this->target->getPrefix();
+		$psr4Prefix = $this->target->getPrefix()->rtrim('\\');
 		if (!empty($psr4Prefix)) {
 			$companionName = $psr4Prefix->join($companionName, '\\');
 		}
