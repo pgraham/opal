@@ -8,6 +8,8 @@
  */
 namespace zpt\opal;
 
+use Composer\Autoload\ClassLoader;
+
 /**
  * This class encapsulates a PSR-4 mapping from a directory to a namespace
  * prefix.
@@ -31,5 +33,9 @@ class Psr4Dir
 
 	public function getPrefix() {
 		return $this->prefix;
+	}
+
+	public function registerWith(ClassLoader $loader) {
+		$loader->addPsr4((string) $this->prefix, (string) $this->path);
 	}
 }
