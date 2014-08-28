@@ -83,6 +83,8 @@ class CompanionGenerator extends CompanionProvider
 
 		$file = new SplFileObject($outPath, 'w');
 		$file->fwrite($resolved);
+
+		return $companionNs->join($companionClass, '\\')->__toString();
 	}
 
 	/*
