@@ -39,6 +39,7 @@ class CompanionGeneratorTest extends TestCase {
 	}
 
 	public function testGenerator() {
+		eval ('class LonelyClass {}');
 		$director = M::mock('zpt\opal\CompanionDirector');
 
 		$director
@@ -53,7 +54,11 @@ class CompanionGeneratorTest extends TestCase {
 
 		$target = new Psr4Dir(__DIR__ . '/target');
 
-		$generator = new CompanionGenerator($director, $target);
-		$generator->generate((object) []);
+		$generator = new CompanionGenerator('companion', $director, $target);
+		$generator->generate('LonelyClass');
+
+		$this->assertFileExists(
+			__DIR__ . '/target/companion/LonelyClassCompanion.php'
+		);
 	}
 }

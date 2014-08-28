@@ -32,64 +32,63 @@ class CompanionLoaderTest extends TestCase {
 
 	public function testBasicLoading() {
 		// Ensure that a MockCompanion object is available
-		eval("namespace mock;class SimpleCompanion {}");
-
-		// Mock the CompanionDirector
-		$director = M::mock('zpt\opal\CompanionDirector');
-		$director
-			->shouldReceive('getCompanionName')
-			->andReturn('mock\SimpleCompanion');
+		eval("namespace companion;class LonelyClassCompanion {}");
 
 		$target = new Psr4Dir(__DIR__ . '/target');
 
-		$loader = new CompanionLoader($director, $target);
+		$loader = new CompanionLoader('companion', $target);
 
 		$instance = $loader->get('LonelyClass');
-		$this->assertObjectHasAttribute('__opal__loader', $instance);
-		$this->assertInstanceOf(
-			'zpt\opal\CompanionLoader',
-			$instance->__opal__loader
-		);
+		$this->assertInstanceOf('companion\LonelyClassCompanion', $instance);
 	}
 
 	public function testNamespacePrefixLoading() {
 		// Ensure that a MockCompanion object is available
-		eval("namespace dyn\mock;class SimpleCompanion {}");
-
-		// Mock the CompanionDirector
-		$director = M::mock('zpt\opal\CompanionDirector');
-		$director
-			->shouldReceive('getCompanionName')
-			->andReturn('mock\SimpleCompanion');
+		eval("namespace dyn\companion;class LonelyClassCompanion {}");
 
 		$target = new Psr4Dir(__DIR__ . '/target', 'dyn');
 
-		$loader = new CompanionLoader($director, $target);
+		$loader = new CompanionLoader('companion', $target);
 
 		$instance = $loader->get('LonelyClass');
-		$this->assertObjectHasAttribute('__opal__loader', $instance);
-		$this->assertInstanceOf(
-			'zpt\opal\CompanionLoader',
-			$instance->__opal__loader
-		);
+		$this->assertInstanceOf('dyn\companion\LonelyClassCompanion', $instance);
 	}
 
 	public function testCacheDisabled() {
 		// Ensure that a mock companion class is defined
-		eval("namespace uncached\mock; class SimpleCompanion {}");
-
-		// Mock the CompanionDirector
-		$director = M::mock('zpt\opal\CompanionDirector');
-		$director
-			->shouldReceive('getCompanionName')
-			->andReturn('mock\SimpleCompanion');
+		eval("namespace uncached\companion; class LonelyClassCompanion {}");
 
 		$target = new Psr4Dir(__DIR__ . '/target', 'uncached');
-		$loader = new CompanionLoader($director, $target);
+		$loader = new CompanionLoader('companion', $target);
 
 		$instance1 = $loader->get('LonelyClass', false);
 		$instance2 = $loader->get('LonelyClass', false);
 
 		$this->assertFalse($instance1 === $instance2);
+	}
+
+	public function testCompanionAware() {
+		$classDef = <<<'CLASS'
+namespace aware\companion;
+class LonelyClassCompanion implements \zpt\opal\CompanionAwareInterface {
+	private $fSet = false;
+	public function setCompanionLoaderFactory(\zpt\opal\CompanionLoaderFactory $f)
+	{
+		$this->fSet = true;
+	}
+
+	public function wasCalled() { return $this->fSet; }
+}
+CLASS;
+
+		eval($classDef);
+
+		$target = new Psr4Dir(__DIR__ . '/target', 'aware');
+		$loader = new CompanionLoader('companion', $target);
+
+		$instance = $loader->get('LonelyClass');
+
+		$this->assertInstanceOf('aware\companion\LonelyClassCompanion', $instance);
+		$this->assertTrue($instance->wasCalled());
 	}
 }

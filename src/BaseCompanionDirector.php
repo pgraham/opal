@@ -12,6 +12,8 @@ namespace zpt\opal;
  * Base implementation of a {@link CompanionDirector}.
  *
  * @author Philip Graham <philip@zeptech.ca>
+ * @deprecated There are no known implementations that use the companionType
+ *             variable so this class is pretty useless.
  */
 abstract class BaseCompanionDirector implements CompanionDirector
 {
@@ -27,25 +29,5 @@ abstract class BaseCompanionDirector implements CompanionDirector
 	 */
 	protected function __construct($type) {
 		$this->companionType = $type;
-	}
-
-	/**
-	 * Implements a common naming strategy for the global set of companions. The
-	 * naming strategy is based on each {@link CompanionDirector} implementation
-	 * declaring a type name. This is done using the {@link
-	 * BaseCompanionDirector#getCompanionType()} method.
-	 *
-	 * Note that the returned classname is meant to be loaded with a PSR-4
-	 * compliant class loader.
-	 *
-	 * @param string $className
-	 *   Fully qualified name of the class for which a companion will be
-	 *   generated.
-	 */
-	public function getCompanionName($className) {
-		$type = $this->companionType;
-		$basename = str_replace('\\', '_', $className);
-
-		return $type . '\\' . $basename . ucfirst($type);
 	}
 }

@@ -32,16 +32,6 @@ interface CompanionDirector
 	public function getTemplatePath();
 
 	/**
-	 * Get the fully qualified class name for the companion of a given class.
-	 *
-	 * @param string $className
-	 * @throws UnexpectedValueException
-	 *   If the CompanionDirector is not able to generate/load a companion for the
-	 *   specified class for any reason.
-	 */
-	public function getCompanionName($className);
-
-	/**
 	 * Get the template substitution values for the given class.
 	 *
 	 * @param ReflectionClass $defClass
