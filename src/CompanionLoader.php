@@ -64,21 +64,28 @@ class CompanionLoader extends CompanionProvider
 	 * @param string $className
 	 *   The class for which a companion, of they type provided by this loader,
 	 *   should be provided.
+	 * @param array $ctorArgs
+	 *   Array of arguments to pass to the companion constructor. The given
+	 *   arguments are not unpacked and are passed as an array. This may change
+	 *   with PHP 5.6. A single argument could be passed instead of an array.
+	 * @param boolean $useCache
+	 *   Whether or not a retrieve a cached instance if available. If a cached
+	 *   instance is used then any given constructor args will be ignored.
 	 */
-	public function get($className, $useCache = true) {
+	public function get($className, $ctorArgs = [], $useCache = true) {
 		if (!$useCache) {
-			return $this->instantiate($className);
+			return $this->instantiate($className, $ctorArgs);
 		}
 
 		if (!array_key_exists($className, $this->instances)) {
-			$instance = $this->instantiate($className);
+			$instance = $this->instantiate($className, $ctorArgs);
 		  $this->instances[$className] = $instance;
 		}
 		return $this->instances[$className];
 	}
 
 	/* Instantiate a companion for the specified class. */
-	private function instantiate($model) {
+	private function instantiate($model, $ctorArgs) {
 		if (is_object($model)) {
 			$className = get_class($model);
 		} else {
@@ -95,7 +102,7 @@ class CompanionLoader extends CompanionProvider
 		// another instance of zpt\util\String
 		$companionName = (string) $companionName;
 
-		$instance = new $companionName();
+		$instance = new $companionName($ctorArgs);
 
 		if ($instance instanceof CompanionAwareInterface) {
 			$instance->setCompanionLoaderFactory($this->factory);

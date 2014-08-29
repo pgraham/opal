@@ -39,7 +39,7 @@ class CompanionLoaderFactory
 		if (isset($this->loaders[$type])) {
 			return $this->loaders[$type];
 		}
-		return $this->create($director);
+		return $this->create($type);
 	}
 
 	/**
